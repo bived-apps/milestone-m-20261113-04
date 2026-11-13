@@ -1,0 +1,19 @@
+name: bive-tests
+on:
+  push:
+    branches: [main, "milestone/**"]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --check .github/scripts/check-merge-gate.mjs
+      - run: node --check .github/scripts/merge-gate-lib.mjs
+      - run: node --test tests/*.test.ts

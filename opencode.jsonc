@@ -1,0 +1,52 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "supervisor",
+  "agents": {
+    "supervisor": {
+      "description": "Bive supervisor: resolves gates and merges approved pull requests.",
+      "mode": "primary",
+      "system": "{file:./.bive/prompts/SUPERVISOR.md}"
+    },
+    "coordinator": {
+      "description": "Bive coordinator: splits work, briefs delegates, and reviews pull requests.",
+      "mode": "primary",
+      "system": "{file:./.bive/prompts/COORDINATOR.md}",
+      "permissions": [
+        {"action": "shell", "resource": "gh pr merge *", "effect": "deny"},
+        {"action": "shell", "resource": "gh pr close *", "effect": "deny"}
+      ]
+    },
+    "delegate": {
+      "description": "Bive delegate: one issue and one worktree, then stop.",
+      "mode": "primary",
+      "system": "{file:./.bive/prompts/DELEGATE.md}",
+      "permissions": [
+        {"action": "shell", "resource": "gh pr merge *", "effect": "deny"},
+        {"action": "shell", "resource": "gh pr close *", "effect": "deny"}
+      ]
+    }
+  },
+  "policies": [
+    {"action": "tool.use", "resource": "shell:rm -rf *", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:git reset --hard *", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:git rebase *", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:git push --force*", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:git push -f *", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:git push * main", "effect": "deny"},
+    {"action": "tool.use", "resource": "shell:git push * HEAD:main", "effect": "deny"}
+  ],
+  "permissions": [
+    {"action": "shell", "resource": "*", "effect": "allow"},
+    {"action": "shell", "resource": "rm -rf *", "effect": "deny"},
+    {"action": "shell", "resource": "git reset --hard *", "effect": "deny"},
+    {"action": "shell", "resource": "git rebase *", "effect": "deny"},
+    {"action": "shell", "resource": "git push --force*", "effect": "deny"},
+    {"action": "shell", "resource": "git push -f *", "effect": "deny"},
+    {"action": "shell", "resource": "git push * main", "effect": "deny"},
+    {"action": "shell", "resource": "git push * HEAD:main", "effect": "deny"},
+    {"action": "read", "resource": "*", "effect": "allow"},
+    {"action": "read", "resource": "~/.ssh/*", "effect": "deny"},
+    {"action": "read", "resource": "*/.ssh/*", "effect": "deny"},
+    {"action": "external_directory", "resource": "*", "effect": "deny"}
+  ]
+}
