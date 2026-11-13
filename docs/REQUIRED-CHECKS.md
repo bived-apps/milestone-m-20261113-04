@@ -14,9 +14,10 @@ These run on GitHub and appear as commit statuses on a pull request.
 
 - **Workflow file**: `.github/workflows/bive-tests.yml`
 - **Job**: `tests`
-- **Triggers**: `push` to `main` and `bived`; `pull_request` (default activity types: `opened`, `synchronize`, `reopened`).
-- **Runs**: `ubuntu-latest`, Node 22, `node --test tests/*.test.ts`, timeout 10 minutes.
-- **What it checks**: the repository's test suite (`tests/*.test.ts`).
+- **Triggers**: `push` to `main` and `milestone/**`; `pull_request` (default activity types: `opened`, `synchronize`, `reopened`).
+- **Runs**: `ubuntu-latest`, Node 22, `node scripts/run-tests.mjs`, timeout 10 minutes.
+- **Current limitation (audit, 2026-11-13)**: the runner recursively discovers only `.test.mjs`, omits existing `.test.ts` files, and stops after twelve files with exit code zero even if earlier files failed. Its "Time budget" is a file-count cutoff, not elapsed time. Missing required test files are not detected. Therefore a green status does not establish a complete or failure-free suite.
+- **Recovery #24, not yet delivered**: supervisor-approved work is limited to the runner and one regression test file, without workflow changes. Required behavior is discovery of both suffixes, complete accounting beyond twelve files, and nonzero exits on failures, timeouts, discovery errors or omissions. Synthetic regressions must execute in isolated fixture directories without recursively invoking themselves. Consult the actual reviewed runner head and retained outputs before relying on future green checks.
 - **Expected on PRs**: yes — the `pull_request` trigger runs it on pull requests (default activity types).
 
 ### `bive-inviolable / check`
